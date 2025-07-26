@@ -1,222 +1,222 @@
-// 导入BellaAI核心模块
-import { BellaAI } from './core.js';
-import { ChatInterface } from './chatInterface.js';
+// Nhập module lõi BellaAI
+import { BellaAI } from "./core.js";
+import { ChatInterface } from "./chatInterface.js";
 
-document.addEventListener('DOMContentLoaded', async function() {
-    // --- Get all necessary DOM elements first ---
-    const transcriptDiv = document.getElementById('transcript');
-    const loadingScreen = document.getElementById('loading-screen');
-    const video1 = document.getElementById('video1');
-    const video2 = document.getElementById('video2');
-    const micButton = document.getElementById('mic-button');
+document.addEventListener("DOMContentLoaded", async function() {
+    // --- Lấy tất cả các phần tử DOM cần thiết ---
+    const transcriptDiv = document.getElementById("transcript");
+    const loadingScreen = document.getElementById("loading-screen");
+    const video1 = document.getElementById("video1");
+    const video2 = document.getElementById("video2");
+    const micButton = document.getElementById("mic-button");
 
 
-    // --- AI Core Initialization ---
+    // --- Khởi tạo lõi AI ---
     let bellaAI;
     let chatInterface;
     
-    // 首先初始化聊天界面（不依赖AI）
+    // Đầu tiên khởi tạo giao diện chat (không phụ thuộc AI)
     try {
         chatInterface = new ChatInterface();
-        console.log('聊天界面初始化成功');
-        console.log('ChatInterface实例创建完成:', chatInterface);
-        console.log('聊天容器元素:', chatInterface.chatContainer);
-        console.log('聊天容器是否在DOM中:', document.body.contains(chatInterface.chatContainer));
+        console.log("Chat interface initialized successfully");
+        console.log("ChatInterface instance created:", chatInterface);
+        console.log("Chat container element:", chatInterface.chatContainer);
+        console.log("Is chat container in DOM:", document.body.contains(chatInterface.chatContainer));
         
-        // 自动显示聊天界面（调试用）
+        // Tự động hiển thị giao diện chat (dùng cho debug)
         setTimeout(() => {
-            console.log('尝试自动显示聊天界面...');
+            console.log("Trying to auto show chat interface...");
             chatInterface.show();
-            console.log('聊天界面已自动显示');
-            console.log('聊天界面可见性:', chatInterface.getVisibility());
-            console.log('聊天容器类名:', chatInterface.chatContainer.className);
+            console.log("Chat interface auto shown");
+            console.log("Chat interface visibility:", chatInterface.getVisibility());
+            console.log("Chat container class name:", chatInterface.chatContainer.className);
         }, 2000);
     } catch (error) {
-        console.error('聊天界面初始化失败:', error);
+        console.error("Failed to initialize chat interface:", error);
     }
     
-    // 然后尝试初始化AI核心
+    // Sau đó thử khởi tạo lõi AI
     micButton.disabled = true;
-    transcriptDiv.textContent = '正在唤醒贝拉的核心...';
+    transcriptDiv.textContent = "Waking up Bella's core...";
     try {
         bellaAI = await BellaAI.getInstance();
-        console.log('Bella AI 初始化成功');
+        console.log("Bella AI initialized successfully");
         
-        // 设置聊天界面的AI回调函数
+        // Thiết lập hàm callback AI cho giao diện chat
         if (chatInterface) {
             chatInterface.onMessageSend = async (message) => {
                 try {
                     chatInterface.showTypingIndicator();
                     const response = await bellaAI.think(message);
                     chatInterface.hideTypingIndicator();
-                    chatInterface.addMessage('assistant', response);
+                    chatInterface.addMessage("assistant", response);
                 } catch (error) {
-                    console.error('AI处理错误:', error);
+                    console.error("AI processing error:", error);
                     chatInterface.hideTypingIndicator();
-                    chatInterface.addMessage('assistant', '抱歉，我现在有点困惑，请稍后再试...');
+                    chatInterface.addMessage("assistant", "Sorry, I'm a bit confused right now, please try again later...");
                 }
             };
         }
         
         micButton.disabled = false;
-        transcriptDiv.textContent = '贝拉已准备好，请点击麦克风开始对话。';
+        transcriptDiv.textContent = "Bella is ready, please click the microphone to start a conversation.";
     } catch (error) {
-        console.error('Failed to initialize Bella AI:', error);
-        transcriptDiv.textContent = 'AI模型加载失败，但聊天界面仍可使用。';
+        console.error("Failed to initialize Bella AI:", error);
+        transcriptDiv.textContent = "AI model failed to load, but the chat interface is still available.";
         
-        // 即使AI失败，也提供基本的聊天功能
+        // Ngay cả khi AI thất bại, vẫn cung cấp chức năng chat cơ bản
         if (chatInterface) {
             chatInterface.onMessageSend = async (message) => {
                 chatInterface.showTypingIndicator();
                 setTimeout(() => {
                     chatInterface.hideTypingIndicator();
                     const fallbackResponses = [
-                        '我的AI核心还在加载中，请稍后再试...',
-                        '抱歉，我现在无法正常思考，但我会努力学习的！',
-                        '我的大脑还在启动中，请给我一点时间...',
-                        '系统正在更新，暂时无法提供智能回复。'
+                        "My AI core is still loading, please try again later...",
+                        "Sorry, I can't think properly right now, but I'm learning!",
+                        "My brain is still starting up, please give me a moment...",
+                        "System is updating, temporarily unable to provide intelligent replies."
                     ];
                     const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
-                    chatInterface.addMessage('assistant', randomResponse);
+                    chatInterface.addMessage("assistant", randomResponse);
                 }, 1000);
             };
         }
         
-        // 禁用语音功能，但保持界面可用
+        // Vô hiệu hóa chức năng giọng nói, nhưng vẫn giữ giao diện khả dụng
         micButton.disabled = true;
     }
 
-    // --- Loading screen handling ---
+    // --- Xử lý màn hình loading ---
     setTimeout(() => {
-        loadingScreen.style.opacity = '0';
-        // Hide it after the animation to prevent it from blocking interactions
+        loadingScreen.style.opacity = "0";
+        // Ẩn sau hiệu ứng để không chặn tương tác
         setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            // 显示聊天控制面板
-            const chatControlPanel = document.querySelector('.chat-control-panel');
+            loadingScreen.style.display = "none";
+            // Hiển thị bảng điều khiển chat
+            const chatControlPanel = document.querySelector(".chat-control-panel");
             if (chatControlPanel) {
-                chatControlPanel.classList.add('visible');
+                chatControlPanel.classList.add("visible");
             }
-        }, 500); // This time should match the transition time in CSS
-    }, 1500); // Start fading out after 1.5 seconds
+        }, 500); // Thời gian này nên khớp với transition trong CSS
+    }, 1500); // Bắt đầu mờ dần sau 1.5 giây
 
     let activeVideo = video1;
     let inactiveVideo = video2;
 
-    // 视频列表
+    // Danh sách video
     const videoList = [
-        '视频资源/3D 建模图片制作.mp4',
-        '视频资源/jimeng-2025-07-16-1043-笑着优雅的左右摇晃，过一会儿手扶着下巴，保持微笑.mp4',
-        '视频资源/jimeng-2025-07-16-4437-比耶，然后微笑着优雅的左右摇晃.mp4',
-        '视频资源/生成加油视频.mp4',
-        '视频资源/生成跳舞视频.mp4',
-        '视频资源/负面/jimeng-2025-07-16-9418-双手叉腰，嘴巴一直在嘟囔，表情微微生气.mp4'
+        "视频资源/3D 建模图片制作.mp4",
+        "视频资源/jimeng-2025-07-16-1043-笑着优雅的左右摇晃，过一会儿手扶着下巴，保持微笑.mp4",
+        "视频资源/jimeng-2025-07-16-4437-比耶，然后微笑着优雅的左右摇晃.mp4",
+        "视频资源/生成加油视频.mp4",
+        "视频资源/生成跳舞视频.mp4",
+        "视频资源/负面/jimeng-2025-07-16-9418-双手叉腰，嘴巴一直在嘟囔，表情微微生气.mp4"
     ];
 
-    // --- 视频交叉淡入淡出播放功能 ---
+    // --- Chức năng chuyển đổi video fade in/out ---
     function switchVideo() {
-        // 1. 选择下一个视频
-        const currentVideoSrc = activeVideo.querySelector('source').getAttribute('src');
+        // 1. Chọn video tiếp theo
+        const currentVideoSrc = activeVideo.querySelector("source").getAttribute("src");
         let nextVideoSrc = currentVideoSrc;
         while (nextVideoSrc === currentVideoSrc) {
             const randomIndex = Math.floor(Math.random() * videoList.length);
             nextVideoSrc = videoList[randomIndex];
         }
 
-        // 2. 设置不活动的 video 元素的 source
-        inactiveVideo.querySelector('source').setAttribute('src', nextVideoSrc);
+        // 2. Đặt source cho video không hoạt động
+        inactiveVideo.querySelector("source").setAttribute("src", nextVideoSrc);
         inactiveVideo.load();
 
-        // 3. 当不活动的视频可以播放时，执行切换
-        inactiveVideo.addEventListener('canplaythrough', function onCanPlayThrough() {
-            // 确保事件只触发一次
-            inactiveVideo.removeEventListener('canplaythrough', onCanPlayThrough);
+        // 3. Khi video không hoạt động có thể phát, thực hiện chuyển đổi
+        inactiveVideo.addEventListener("canplaythrough", function onCanPlayThrough() {
+            // Đảm bảo sự kiện chỉ kích hoạt một lần
+            inactiveVideo.removeEventListener("canplaythrough", onCanPlayThrough);
 
-            // 4. 播放新视频
+            // 4. Phát video mới
             inactiveVideo.play().catch(error => {
                 console.error("Video play failed:", error);
             });
 
-            // 5. 切换 active class 来触发 CSS 过渡
-            activeVideo.classList.remove('active');
-            inactiveVideo.classList.add('active');
+            // 5. Chuyển đổi class active để kích hoạt hiệu ứng CSS
+            activeVideo.classList.remove("active");
+            inactiveVideo.classList.add("active");
 
-            // 6. 更新角色
+            // 6. Cập nhật vai trò
             [activeVideo, inactiveVideo] = [inactiveVideo, activeVideo];
 
-            // 为新的 activeVideo 绑定 ended 事件
-            activeVideo.addEventListener('ended', switchVideo, { once: true });
-        }, { once: true }); // 使用 { once: true } 确保事件只被处理一次
+            // Gắn sự kiện ended cho video active mới
+            activeVideo.addEventListener("ended", switchVideo, { once: true });
+        }, { once: true }); // Sử dụng { once: true } để đảm bảo sự kiện chỉ xử lý một lần
     }
 
-    // 初始启动
-    activeVideo.addEventListener('ended', switchVideo, { once: true });
+    // Khởi động ban đầu
+    activeVideo.addEventListener("ended", switchVideo, { once: true });
     
-    // 聊天控制按钮事件
-    const chatToggleBtn = document.getElementById('chat-toggle-btn');
-    const chatTestBtn = document.getElementById('chat-test-btn');
+    // Sự kiện nút điều khiển chat
+    const chatToggleBtn = document.getElementById("chat-toggle-btn");
+    const chatTestBtn = document.getElementById("chat-test-btn");
     
     if (chatToggleBtn) {
-        chatToggleBtn.addEventListener('click', () => {
+        chatToggleBtn.addEventListener("click", () => {
             if (chatInterface) {
-                console.log('聊天按钮被点击');
-                console.log('点击前聊天界面状态:', chatInterface.getVisibility());
-                console.log('点击前聊天容器类名:', chatInterface.chatContainer.className);
+                console.log("Chat button clicked");
+                console.log("Chat interface state before click:", chatInterface.getVisibility());
+                console.log("Chat container class name before click:", chatInterface.chatContainer.className);
                 
                 chatInterface.toggle();
                 
-                console.log('点击后聊天界面状态:', chatInterface.getVisibility());
-                console.log('点击后聊天容器类名:', chatInterface.chatContainer.className);
-                console.log('聊天界面切换，当前状态:', chatInterface.getVisibility());
+                console.log("Chat interface state after click:", chatInterface.getVisibility());
+                console.log("Chat container class name after click:", chatInterface.chatContainer.className);
+                console.log("Chat interface toggled, current state:", chatInterface.getVisibility());
                 
-                // 更新按钮状态
+                // Cập nhật trạng thái nút
                 const isVisible = chatInterface.getVisibility();
                 chatToggleBtn.innerHTML = isVisible ? 
-                    '<i class="fas fa-times"></i><span>关闭</span>' : 
-                    '<i class="fas fa-comments"></i><span>聊天</span>';
-                console.log('按钮文本更新为:', chatToggleBtn.innerHTML);
+                    "<i class=\"fas fa-times\"></i><span>Close</span>" : 
+                    "<i class=\"fas fa-comments\"></i><span>Chat</span>";
+                console.log("Button text updated to:", chatToggleBtn.innerHTML);
             }
         });
     }
     
     if (chatTestBtn) {
-        chatTestBtn.addEventListener('click', () => {
+        chatTestBtn.addEventListener("click", () => {
             if (chatInterface) {
                 const testMessages = [
-                    '你好！我是贝拉，很高兴见到你！',
-                    '聊天界面工作正常，所有功能都已就绪。',
-                    '这是一条测试消息，用来验证界面功能。'
+                    "Hello! I'm Bella, nice to meet you!",
+                    "The chat interface is working fine and all features are ready.",
+                    "This is a test message to verify the interface functionality."
                 ];
                 const randomMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
-                chatInterface.addMessage('assistant', randomMessage);
+                chatInterface.addMessage("assistant", randomMessage);
                 
-                // 如果聊天界面未显示，则自动显示
+                // Nếu giao diện chat chưa hiển thị, tự động hiển thị
                 if (!chatInterface.getVisibility()) {
                     chatInterface.show();
-                    chatToggleBtn.innerHTML = '<i class="fas fa-times"></i><span>关闭</span>';
+                    chatToggleBtn.innerHTML = "<i class=\"fas fa-times\"></i><span>Close</span>";
                 }
                 
-                console.log('测试消息已添加:', randomMessage);
+                console.log("Test message added:", randomMessage);
             }
         });
     }
 
 
-    // --- 语音识别核心 ---
+    // --- Nhân lõi nhận diện giọng nói ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition;
 
-    // 检查浏览器是否支持语音识别
+    // Kiểm tra trình duyệt có hỗ trợ nhận diện giọng nói không
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
-        recognition.continuous = true; // 持续识别
-        recognition.lang = 'zh-CN'; // 设置语言为中文
-        recognition.interimResults = true; // 获取临时结果
+        recognition.continuous = true; // Nhận diện liên tục
+        recognition.lang = "en-US"; // Đặt ngôn ngữ là tiếng Anh
+        recognition.interimResults = true; // Lấy kết quả tạm thời
 
         recognition.onresult = async (event) => {
-            const transcriptContainer = document.getElementById('transcript');
-            let final_transcript = '';
-            let interim_transcript = '';
+            const transcriptContainer = document.getElementById("transcript");
+            let final_transcript = "";
+            let interim_transcript = "";
 
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
@@ -226,96 +226,95 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             }
 
-            // Update interim results
-            transcriptContainer.textContent = `你: ${final_transcript || interim_transcript}`;
+            // Cập nhật kết quả tạm thời
+            transcriptContainer.textContent = `You: ${final_transcript || interim_transcript}`;
 
-            // Once we have a final result, process it with the AI
+            // Khi có kết quả cuối cùng, xử lý với AI
             if (final_transcript && bellaAI) {
                 const userText = final_transcript.trim();
-                transcriptContainer.textContent = `你: ${userText}`;
+                transcriptContainer.textContent = `You: ${userText}`;
 
-                // 如果聊天界面已打开，也在聊天窗口中显示
+                // Nếu giao diện chat đang mở, cũng hiển thị trong cửa sổ chat
                 if (chatInterface && chatInterface.getVisibility()) {
-                    chatInterface.addMessage('user', userText);
+                    chatInterface.addMessage("user", userText);
                 }
 
                 try {
-                    // Let Bella think
-                    const thinkingText = document.createElement('p');
-                    thinkingText.textContent = '贝拉正在思考...';
-                    thinkingText.style.color = '#888';
-                    thinkingText.style.fontStyle = 'italic';
+                    // Để Bella suy nghĩ
+                    const thinkingText = document.createElement("p");
+                    thinkingText.textContent = "Bella is thinking...";
+                    thinkingText.style.color = "#888";
+                    thinkingText.style.fontStyle = "italic";
                     transcriptContainer.appendChild(thinkingText);
                     
                     const response = await bellaAI.think(userText);
                     
                     transcriptContainer.removeChild(thinkingText);
-                    const bellaText = document.createElement('p');
-                    bellaText.textContent = `贝拉: ${response}`;
-                    bellaText.style.color = '#ff6b9d';
-                    bellaText.style.fontWeight = 'bold';
-                    bellaText.style.marginTop = '10px';
+                    const bellaText = document.createElement("p");
+                    bellaText.textContent = `Bella: ${response}`;
+                    bellaText.style.color = "#ff6b9d";
+                    bellaText.style.fontWeight = "bold";
+                    bellaText.style.marginTop = "10px";
                     transcriptContainer.appendChild(bellaText);
 
-                    // 如果聊天界面已打开，也在聊天窗口中显示
+                    // Nếu giao diện chat đang mở, cũng hiển thị trong cửa sổ chat
                     if (chatInterface && chatInterface.getVisibility()) {
-                        chatInterface.addMessage('assistant', response);
+                        chatInterface.addMessage("assistant", response);
                     }
 
-                    // TTS功能暂时禁用，将在下一阶段激活
-                    // TODO: 激活语音合成功能
+                    // Tính năng TTS tạm thời bị tắt, sẽ kích hoạt ở giai đoạn tiếp theo
+                    // TODO: Kích hoạt tính năng tổng hợp giọng nói
                     // const audioData = await bellaAI.speak(response);
-                    // const blob = new Blob([audioData], { type: 'audio/wav' });
+                    // const blob = new Blob([audioData], { type: "audio/wav" });
                     // const audioUrl = URL.createObjectURL(blob);
                     // const audio = new Audio(audioUrl);
                     // audio.play();
 
                 } catch (error) {
-                    console.error('Bella AI processing error:', error);
-                    const errorText = document.createElement('p');
-                    const errorMsg = '贝拉处理时遇到问题，但她还在努力学习中...';
+                    console.error("Bella AI processing error:", error);
+                    const errorText = document.createElement("p");
+                    const errorMsg = "Bella encountered a problem while processing, but she is still learning...";
                     errorText.textContent = errorMsg;
-                    errorText.style.color = '#ff9999';
+                    errorText.style.color = "#ff9999";
                     transcriptContainer.appendChild(errorText);
                     
                     if (chatInterface && chatInterface.getVisibility()) {
-                        chatInterface.addMessage('assistant', errorMsg);
+                        chatInterface.addMessage("assistant", errorMsg);
                     }
                 }
             }
         };
 
         recognition.onerror = (event) => {
-            console.error('语音识别错误:', event.error);
+            console.error("Speech recognition error:", event.error);
         };
 
     } else {
-        console.log('您的浏览器不支持语音识别功能。');
-        // 可以在界面上给用户提示
+        console.log("Your browser does not support speech recognition.");
+        // Có thể hiển thị thông báo cho người dùng trên giao diện
     }
 
-    // --- 麦克风按钮交互 ---
+    // --- Tương tác nút micro ---
     let isListening = false;
 
-    micButton.addEventListener('click', function() {
-        if (!SpeechRecognition) return; // 如果不支持，则不执行任何操作
+    micButton.addEventListener("click", function() {
+        if (!SpeechRecognition) return; // Nếu không hỗ trợ thì không làm gì
 
         isListening = !isListening;
-        micButton.classList.toggle('is-listening', isListening);
-        const transcriptContainer = document.querySelector('.transcript-container');
-        const transcriptText = document.getElementById('transcript');
+        micButton.classList.toggle("is-listening", isListening);
+        const transcriptContainer = document.querySelector(".transcript-container");
+        const transcriptText = document.getElementById("transcript");
 
         if (isListening) {
-            transcriptText.textContent = '聆听中...'; // 立刻显示提示
-            transcriptContainer.classList.add('visible');
+            transcriptText.textContent = "Listening..."; // Hiển thị thông báo ngay lập tức
+            transcriptContainer.classList.add("visible");
             recognition.start();
         } else {
             recognition.stop();
-            transcriptContainer.classList.remove('visible');
-            transcriptText.textContent = ''; // 清空文本
+            transcriptContainer.classList.remove("visible");
+            transcriptText.textContent = ""; // Xóa nội dung
         }
     });
-
 
 
 

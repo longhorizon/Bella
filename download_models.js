@@ -11,9 +11,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Define the models to download
 const models = {
-    'Xenova/whisper-tiny': 'https://hf-mirror.com/Xenova/whisper-tiny',
-    'Xenova/LaMini-Flan-T5-77M': 'https://hf-mirror.com/Xenova/LaMini-Flan-T5-77M',
-    'Xenova/speecht5_tts': 'https://hf-mirror.com/Xenova/speecht5_tts',
+    'Xenova/whisper-tiny': 'https://huggingface.co/Xenova/whisper-tiny',
+    'Xenova/LaMini-Flan-T5-77M': 'https://huggingface.co/Xenova/LaMini-Flan-T5-77M',
+    'Xenova/speecht5_tts': 'https://huggingface.co/Xenova/speecht5_tts',
 };
 
 // Define where to save the models

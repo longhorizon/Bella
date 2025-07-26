@@ -1,5 +1,5 @@
-// simpleBellaAI.js - 简化版贝拉AI，专门用于测试聊天界面
-// 移除了复杂的模块依赖，专注于聊天功能
+// simpleBellaAI.js - Phiên bản rút gọn của BellaAI, dùng để test giao diện chat
+// Đã loại bỏ các phụ thuộc phức tạp, chỉ tập trung vào chức năng chat
 
 class SimpleBellaAI {
     static instance = null;
@@ -13,35 +13,35 @@ class SimpleBellaAI {
     }
 
     constructor() {
-        this.currentMode = 'casual'; // 聊天模式：casual, assistant, creative
+        this.currentMode = "casual"; // Chế độ chat: casual, assistant, creative
         this.isInitialized = false;
     }
 
     async init() {
         try {
-            console.log('初始化简化版贝拉AI...');
-            // 模拟初始化过程
+            console.log("Initializing SimpleBellaAI...");
+            // Mô phỏng quá trình khởi tạo
             await new Promise(resolve => setTimeout(resolve, 1000));
             this.isInitialized = true;
-            console.log('简化版贝拉AI初始化完成');
+            console.log("SimpleBellaAI initialized");
         } catch (error) {
-            console.error('简化版贝拉AI初始化失败:', error);
+            console.error("SimpleBellaAI initialization failed:", error);
             throw error;
         }
     }
 
     async think(prompt) {
         try {
-            console.log('贝拉正在思考:', prompt);
+            console.log("Bella is thinking:", prompt);
             
-            // 模拟思考时间
+            // Mô phỏng thời gian suy nghĩ
             await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
             
-            // 根据模式生成不同风格的回复
+            // Sinh phản hồi theo chế độ
             return this.generateResponse(prompt);
             
         } catch (error) {
-            console.error('思考过程中出现错误:', error);
+            console.error("Error during thinking:", error);
             return this.getErrorResponse();
         }
     }
@@ -49,25 +49,25 @@ class SimpleBellaAI {
     generateResponse(prompt) {
         const responses = {
             casual: [
-                `哈哈，你说的"${prompt}"真有趣！我觉得这个话题很棒呢～`,
-                `关于"${prompt}"，我想说这真的很有意思！你还想聊什么吗？`,
-                `嗯嗯，"${prompt}"让我想到了很多呢！我们继续聊下去吧～`,
-                `哇，"${prompt}"这个话题我喜欢！你的想法总是那么特别～`,
-                `听你说"${prompt}"，我感觉心情都变好了！继续和我分享吧～`
+                `Haha, what you said "${prompt}" is really interesting! I think this topic is great!`,
+                `About "${prompt}", I think it's really fun! Do you want to talk about something else?`,
+                `Hmm, "${prompt}" reminds me of a lot! Let's keep chatting!`,
+                `Wow, I like the topic "${prompt}"! Your ideas are always so special!`,
+                `Hearing you say "${prompt}", I feel happier! Keep sharing with me!`
             ],
             assistant: [
-                `关于"${prompt}"，我来为您提供一些有用的信息和建议。`,
-                `针对"${prompt}"这个问题，我建议您可以从以下几个方面考虑。`,
-                `"${prompt}"是一个很好的问题，让我来帮您分析一下。`,
-                `基于"${prompt}"，我可以为您提供以下专业建议。`,
-                `关于"${prompt}"，我整理了一些相关信息供您参考。`
+                `About "${prompt}", let me provide you with some useful information and suggestions.`,
+                `For the question "${prompt}", I suggest you can consider the following aspects.`,
+                `"${prompt}" is a good question, let me help you analyze it.`,
+                `Based on "${prompt}", I can provide you with the following professional advice.`,
+                `About "${prompt}", I have compiled some relevant information for your reference.`
             ],
             creative: [
-                `哇！"${prompt}"让我的创意火花瞬间点燃！让我们一起想象一下...`,
-                `"${prompt}"真是个充满想象力的话题！我脑海中浮现出无数奇妙的画面～`,
-                `听到"${prompt}"，我仿佛看到了一个全新的世界！让我们一起探索吧～`,
-                `"${prompt}"激发了我的灵感！我想到了一个超级有趣的创意...`,
-                `哇塞！"${prompt}"让我的想象力飞起来了！我们来创造点什么特别的吧～`
+                `Wow! "${prompt}" instantly ignited my creativity! Let's imagine together...`,
+                `"${prompt}" is such an imaginative topic! Countless wonderful scenes appear in my mind!`,
+                `Hearing "${prompt}", I seem to see a whole new world! Let's explore together!`,
+                `"${prompt}" inspired me! I thought of a super interesting idea...`,
+                `Wow! "${prompt}" makes my imagination fly! Let's create something special!`
             ]
         };
 
@@ -77,49 +77,49 @@ class SimpleBellaAI {
         return randomResponse;
     }
 
-    // 获取错误回应
+    // Lấy phản hồi lỗi
     getErrorResponse() {
         const errorResponses = [
-            "抱歉，我现在有点困惑，让我重新整理一下思路...",
-            "嗯...我需要再想想，请稍等一下。",
-            "我的思绪有点乱，给我一点时间整理一下。",
-            "让我重新组织一下语言，稍等片刻。",
-            "哎呀，我刚才走神了，你能再说一遍吗？"
+            "Sorry, I'm a bit confused right now, let me reorganize my thoughts...",
+            "Hmm... I need to think a bit more, please wait a moment.",
+            "My mind is a bit messy, give me some time to sort it out.",
+            "Let me reorganize my words, please wait a moment.",
+            "Oops, I was distracted just now, can you say it again?"
         ];
         
         return errorResponses[Math.floor(Math.random() * errorResponses.length)];
     }
 
-    // 设置聊天模式
+    // Đặt chế độ chat
     setChatMode(mode) {
-        if (['casual', 'assistant', 'creative'].includes(mode)) {
+        if (["casual", "assistant", "creative"].includes(mode)) {
             this.currentMode = mode;
-            console.log(`聊天模式已切换为: ${mode}`);
+            console.log(`Chat mode switched to: ${mode}`);
             return true;
         }
         return false;
     }
 
-    // 获取当前配置信息
+    // Lấy thông tin cấu hình hiện tại
     getCurrentConfig() {
         return {
             useCloudAPI: false,
-            provider: { name: 'simple', model: 'SimpleBellaAI' },
+            provider: { name: "simple", model: "SimpleBellaAI" },
             mode: this.currentMode,
             isConfigured: true,
             isInitialized: this.isInitialized
         };
     }
 
-    // 清除对话历史（简化版无需实际操作）
+    // Xóa lịch sử hội thoại (bản rút gọn không cần thực hiện)
     clearHistory() {
-        console.log('对话历史已清除');
+        console.log("Chat history cleared");
     }
 }
 
-// 将SimpleBellaAI暴露为全局变量
+// Xuất SimpleBellaAI ra biến toàn cục
 window.SimpleBellaAI = SimpleBellaAI;
-// 同时也暴露为BellaAI，保持兼容性
+// Đồng thời xuất ra BellaAI để giữ tương thích
 window.BellaAI = SimpleBellaAI;
 
-console.log('SimpleBellaAI 已加载完成');
+console.log("SimpleBellaAI 已加载完成");
