@@ -25,8 +25,9 @@ class BellaAI {
 
     constructor() {
         this.cloudAPI = new CloudAPIService();
-        this.useCloudAPI = false; // Mặc định dùng mô hình local
+        this.useCloudAPI = true; // Mặc định dùng mô hình cloud
         this.currentMode = "casual"; // Chế độ chat: casual, assistant, creative
+        this.conversationHistory = [];
     }
 
     async init() {
@@ -35,7 +36,7 @@ class BellaAI {
         // Ưu tiên tải mô hình LLM (chức năng chat)
         try {
             console.log("Đang tải mô hình LLM...");
-            this.llm = await pipeline("text2text-generation", "Xenova/LaMini-Flan-T5-77M");
+            this.llm = await pipeline("text2text-generation", "Xenova/LaMini-Flan-T5-248M");
             console.log("Tải mô hình LLM thành công.");
         } catch (error) {
             console.error("Tải mô hình LLM thất bại:", error);
@@ -107,22 +108,22 @@ class BellaAI {
         if (!this.llm) {
             return "I'm still learning how to think, please wait a moment...";
         }
-        
+
         const bellaPrompt = this.enhancePromptForMode(prompt, true);
-        
+
         const result = await this.llm(bellaPrompt, {
             max_new_tokens: 50,
             temperature: 0.8,
             top_k: 40,
             do_sample: true,
         });
-        
+
         // Làm sạch kết quả sinh ra
         let response = result[0].generated_text;
         if (response.includes(bellaPrompt)) {
             response = response.replace(bellaPrompt, "").trim();
         }
-        
+
         return response || "I need to think a bit more...";
     }
 
@@ -141,6 +142,18 @@ class BellaAI {
         };
         
         return modePrompts[this.currentMode] || modePrompts.casual;
+    }
+
+    // Tạo prompt dựa trên lịch sử hội thoại, định dạng rõ ràng cho T5
+    buildPromptFromHistory() {
+        const systemPrompt = `The following is a friendly conversation between a human and an AI assistant named Bella. Bella is warm, casual, and always tries to understand the user's intent.`;
+
+        const historyLines = (this.conversationHistory || [])
+            .slice(-6)
+            .map(turn => `${turn.role === "user" ? "Human" : "Bella"}: ${turn.content}`)
+            .join("\n");
+
+        return `${systemPrompt}\n${historyLines}\nBella:`.trim();
     }
 
     // Lấy phản hồi lỗi
@@ -192,7 +205,7 @@ class BellaAI {
     getCurrentConfig() {
         return {
             useCloudAPI: this.useCloudAPI,
-            provider: this.useCloudAPI ? this.cloudAPI.getCurrentProvider() : { name: "local", model: "LaMini-Flan-T5-77M" },
+            provider: this.useCloudAPI ? this.cloudAPI.getCurrentProvider() : { name: "local", model: "LaMini-Flan-T5-248M" },
             mode: this.currentMode,
             isConfigured: this.useCloudAPI ? this.cloudAPI.isConfigured() : true
         };

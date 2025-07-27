@@ -4,6 +4,15 @@
 class CloudAPIService {
     constructor() {
         this.apiConfigs = {
+            // Cấu hình OpenRouter AI
+            openrouter: {
+                baseURL: "https://openrouter.ai/api/v1/chat/completions",
+                model: "qwen/qwen3-235b-a22b-2507:free",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer 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"
+                }
+            },
             // Cấu hình OpenAI GPT-3.5/4
             openai: {
                 baseURL: "https://api.openai.com/v1/chat/completions",
@@ -41,7 +50,7 @@ class CloudAPIService {
             }
         };
         
-        this.currentProvider = "openai"; // Mặc định dùng OpenAI
+        this.currentProvider = "openrouter"; // Mặc định dùng openrouter
         this.conversationHistory = [];
         this.maxHistoryLength = 10; // Lưu tối đa 10 lượt hội thoại gần nhất
     }
@@ -49,11 +58,11 @@ class CloudAPIService {
     // Thiết lập API key
     setAPIKey(provider, apiKey) {
         if (this.apiConfigs[provider]) {
-            if (provider === "openai" || provider === "qwen" || provider === "glm") {
+            if (provider === "openai" || provider === "qwen" || provider === "glm" || provider === "openrouter") {
                 this.apiConfigs[provider].headers["Authorization"] = `Bearer ${apiKey}`;
             } else if (provider === "ernie") {
                 this.apiConfigs[provider].accessToken = apiKey;
-            }
+            } else
             return true;
         }
         return false;
@@ -119,6 +128,9 @@ Always maintain this warm and elegant personality.`
                 case "glm":
                     response = await this.callGLM(userMessage);
                     break;
+                case "openrouter":
+                    response = await this.callOpenRouter(userMessage);
+                    break;
                 default:
                     throw new Error(`Unimplemented AI provider: ${this.currentProvider}`);
             }
@@ -131,6 +143,34 @@ Always maintain this warm and elegant personality.`
             console.error(`Cloud API call failed (${this.currentProvider}):`, error);
             throw error;
         }
+    }
+
+    // Gọi OpenRouter API
+    async callOpenRouter(userMessage) {
+        const config = this.apiConfigs.openrouter;
+        const messages = [
+            this.getBellaSystemPrompt(),
+            ...this.conversationHistory
+        ];
+
+        const response = await fetch(config.baseURL, {
+            method: "POST",
+            headers: config.headers,
+            body: JSON.stringify({
+                model: config.model,
+                messages: messages,
+                max_tokens: 1024,
+                temperature: 0.8,
+                top_p: 0.9
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.choices[0].message.content.trim();
     }
 
     // Gọi OpenAI API

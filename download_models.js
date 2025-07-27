@@ -12,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Define the models to download
 const models = {
     'Xenova/whisper-tiny': 'https://huggingface.co/Xenova/whisper-tiny',
-    'Xenova/LaMini-Flan-T5-77M': 'https://huggingface.co/Xenova/LaMini-Flan-T5-77M',
+    'Xenova/LaMini-Flan-T5-248M': 'https://huggingface.co/Xenova/LaMini-Flan-T5-248M',
     'Xenova/speecht5_tts': 'https://huggingface.co/Xenova/speecht5_tts',
 };
 

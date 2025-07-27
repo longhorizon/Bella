@@ -50,6 +50,18 @@ document.addEventListener("DOMContentLoaded", async function() {
                     const response = await bellaAI.think(message);
                     chatInterface.hideTypingIndicator();
                     chatInterface.addMessage("assistant", response);
+
+                    // Phát giọng nói Bella ngay sau khi có phản hồi
+                    try {
+                        const audioData = await bellaAI.speak(response);
+                        const wavBlob = encodeWAV(audioData);
+                        const audioUrl = URL.createObjectURL(wavBlob);
+                        const audio = new Audio(audioUrl);
+                        audio.play();
+                        console.log("Bella đang nói (qua chat):", response);
+                    } catch (speakError) {
+                        console.warn("Lỗi khi phát âm thanh TTS:", speakError);
+                    }
                 } catch (error) {
                     console.error("AI processing error:", error);
                     chatInterface.hideTypingIndicator();
@@ -83,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
         
         // Vô hiệu hóa chức năng giọng nói, nhưng vẫn giữ giao diện khả dụng
-        micButton.disabled = true;
+        // micButton.disabled = true;
     }
 
     // --- Xử lý màn hình loading ---
@@ -262,15 +274,15 @@ document.addEventListener("DOMContentLoaded", async function() {
                         chatInterface.addMessage("assistant", response);
                     }
 
-                    // Tính năng TTS tạm thời bị tắt, sẽ kích hoạt ở giai đoạn tiếp theo
-                    // TODO: Kích hoạt tính năng tổng hợp giọng nói
-                    // const audioData = await bellaAI.speak(response);
-                    // const blob = new Blob([audioData], { type: "audio/wav" });
-                    // const audioUrl = URL.createObjectURL(blob);
-                    // const audio = new Audio(audioUrl);
-                    // audio.play();
+                    // TODO: Kích hoạt tính năng tổng hợp giọng nói TTS
+                    const audioData = await bellaAI.speak(response); // Float32Array
+                    const wavBlob = encodeWAV(audioData); // Convert sang Blob WAV
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
 
                 } catch (error) {
+                    console.play();
                     console.error("Bella AI processing error:", error);
                     const errorText = document.createElement("p");
                     const errorMsg = "Bella encountered a problem while processing, but she is still learning...";
@@ -319,3 +331,44 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
 });
+
+export function floatTo16BitPCM(float32Array) {
+    const output = new Int16Array(float32Array.length);
+    for (let i = 0; i < float32Array.length; i++) {
+        const s = Math.max(-1, Math.min(1, float32Array[i]));
+        output[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    }
+    return output;
+}
+
+export function encodeWAV(samples, sampleRate = 16000) {
+    const buffer = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(buffer);
+
+    const writeString = (offset, str) => {
+        for (let i = 0; i < str.length; i++) {
+            view.setUint8(offset + i, str.charCodeAt(i));
+        }
+    };
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + samples.length * 2, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true); // subchunk1 size
+    view.setUint16(20, 1, true);  // PCM
+    view.setUint16(22, 1, true);  // channels
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, samples.length * 2, true);
+
+    const pcm = floatTo16BitPCM(samples);
+    for (let i = 0; i < pcm.length; i++) {
+        view.setInt16(44 + i * 2, pcm[i], true);
+    }
+
+    return new Blob([view], { type: 'audio/wav' });
+}
