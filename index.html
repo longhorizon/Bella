@@ -11,15 +11,15 @@
 </head>
 <body>
 
-    <!-- 加载屏幕 -->
+    <!-- Màn hình tải -->
     <div id="loading-screen">
         <img src="Bellaicon/Generated image.webp" alt="Loading Bella...">
     </div>
 
-    <!-- 视频背景 -->
+    <!-- Video nền -->
     <div class="video-container">
         <video autoplay muted class="bg-video active" id="video1">
-            <source src="视频资源/3D 建模图片制作.mp4" type="video/mp4">
+            <source src="images/2.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
         <video muted class="bg-video" id="video2">
@@ -28,22 +28,22 @@
         </video>
     </div>
 
-    <!-- 内容层，覆盖在视频之上 -->
+    <!-- Lớp nội dung, chồng lên trên video -->
     <div class="content-overlay">
 
-        <!-- 语音识别结果显示区域 -->
+        <!-- Khu vực hiển thị kết quả nhận dạng giọng nói -->
         <div class="transcript-container">
             <p id="transcript"></p>
         </div>
 
-        <!-- 底部麦克风和链接 -->
+        <!-- Micrô và liên kết ở phía dưới -->
         <footer class="bottom-bar">
             <button class="mic-button" id="mic-button" aria-label="Start Listening">
                 <i class="fas fa-microphone"></i>
             </button>
         </footer>
 
-        <!-- 聊天控制面板 -->
+        <!-- Bảng điều khiển trò chuyện -->
         <div class="chat-control-panel">
             <button id="chat-toggle-btn" class="control-btn primary">
                 <i class="fas fa-comments"></i>

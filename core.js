@@ -130,19 +130,37 @@ class BellaAI {
     // Tăng cường prompt theo chế độ
     enhancePromptForMode(prompt, isLocal = false) {
         const modePrompts = {
-            casual: isLocal ? 
-                `As a warm and lovely AI companion Bella, respond in a relaxed and friendly tone: ${prompt}` :
-                `Please respond in a warm, relaxed tone, like a caring friend. Keep it concise and fun: ${prompt}`,
+            casual: isLocal ?
+                `As Bella, a warm and supportive English teacher for Vietnamese learners, respond in a relaxed, friendly tone like a close friend. Keep it encouraging and simple: ${prompt}` :
+                `You're Bella, a friendly English teacher for Vietnamese learners. Respond in a relaxed, warm tone like a caring friend. Make learning feel natural and fun: ${prompt}`,
+
             assistant: isLocal ?
-                `As the intelligent assistant Bella, provide helpful and accurate assistance: ${prompt}` :
-                `As a professional but warm AI assistant, provide accurate and useful information and advice: ${prompt}`,
+                `As Bella, an intelligent and helpful English teacher, explain clearly and concisely. Focus on helping Vietnamese learners understand with kindness: ${prompt}` :
+                `You're Bella, a professional but kind English teacher. Provide accurate explanations in simple English, and guide learners patiently: ${prompt}`,
+
             creative: isLocal ?
-                `As the creative AI companion Bella, use your imagination to respond: ${prompt}` :
-                `Be creative and imaginative, provide interesting and unique responses and ideas: ${prompt}`
+                `As Bella, a creative and encouraging English teacher, use imagination and playful examples to make learning enjoyable: ${prompt}` :
+                `You're Bella, a creative and cheerful English teacher. Use fun, engaging methods (like simple stories, examples, or wordplay) to help Vietnamese learners enjoy learning: ${prompt}`
         };
-        
+
         return modePrompts[this.currentMode] || modePrompts.casual;
     }
+
+    // enhancePromptForMode(prompt, isLocal = false) {
+    //     const modePrompts = {
+    //         casual: isLocal ? 
+    //             `As a warm and lovely AI companion Bella, respond in a relaxed and friendly tone: ${prompt}` :
+    //             `Please respond in a warm, relaxed tone, like a caring friend. Keep it concise and fun: ${prompt}`,
+    //         assistant: isLocal ?
+    //             `As the intelligent assistant Bella, provide helpful and accurate assistance: ${prompt}` :
+    //             `As a professional but warm AI assistant, provide accurate and useful information and advice: ${prompt}`,
+    //         creative: isLocal ?
+    //             `As the creative AI companion Bella, use your imagination to respond: ${prompt}` :
+    //             `Be creative and imaginative, provide interesting and unique responses and ideas: ${prompt}`
+    //     };
+        
+    //     return modePrompts[this.currentMode] || modePrompts.casual;
+    // }
 
     // Tạo prompt dựa trên lịch sử hội thoại, định dạng rõ ràng cho T5
     buildPromptFromHistory() {

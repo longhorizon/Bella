@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
         
         // Vô hiệu hóa chức năng giọng nói, nhưng vẫn giữ giao diện khả dụng
-        // micButton.disabled = true;
+        micButton.disabled = true;
     }
 
     // --- Xử lý màn hình loading ---
@@ -117,12 +117,16 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // Danh sách video
     const videoList = [
-        "视频资源/3D 建模图片制作.mp4",
-        "视频资源/jimeng-2025-07-16-1043-笑着优雅的左右摇晃，过一会儿手扶着下巴，保持微笑.mp4",
-        "视频资源/jimeng-2025-07-16-4437-比耶，然后微笑着优雅的左右摇晃.mp4",
-        "视频资源/生成加油视频.mp4",
-        "视频资源/生成跳舞视频.mp4",
-        "视频资源/负面/jimeng-2025-07-16-9418-双手叉腰，嘴巴一直在嘟囔，表情微微生气.mp4"
+        "images/1.mp4",
+        "images/2.mp4",
+        "images/3.mp4",
+        "images/4.mp4"
+        // "视频资源/3D 建模图片制作.mp4",
+        // "视频资源/jimeng-2025-07-16-1043-笑着优雅的左右摇晃，过一会儿手扶着下巴，保持微笑.mp4",
+        // "视频资源/jimeng-2025-07-16-4437-比耶，然后微笑着优雅的左右摇晃.mp4",
+        // "视频资源/生成加油视频.mp4",
+        // "视频资源/生成跳舞视频.mp4",
+        // "视频资源/负面/jimeng-2025-07-16-9418-双手叉腰，嘴巴一直在嘟囔，表情微微生气.mp4"
     ];
 
     // --- Chức năng chuyển đổi video fade in/out ---
